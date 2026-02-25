@@ -119,8 +119,11 @@ jobs:
           with open("${{ steps.find.outputs.plugin_dir }}/plugin.boot.yml") as f:
               boot = yaml.safe_load(f)
 
+          main_service_id = boot.get("mainServiceId", "")
           new_images = []
           for svc_id, svc in boot.get("services", {}).items():
+              if svc_id == main_service_id:
+                  continue  # main service image is built by CD, skip whitelist
               image = svc.get("image", "")
               if image.startswith("ghcr.io/griffinguard/"):
                   continue
@@ -151,7 +154,7 @@ jobs:
       - name: Publish to griffino-plugins
         if: steps.find.outputs.plugin_dir != ''
         env:
-          CD_BOT_TOKEN: ${{ secrets.GRIFFINO_BOT_CD_TOKEN }}
+          CD_BOT_TOKEN: ${{ secrets.CD_BOT_TOKEN }}
         run: |
           PLUGIN_ID="${{ steps.find.outputs.plugin_id }}"
           VERSION="${{ steps.meta.outputs.version }}"
