@@ -160,7 +160,7 @@ jobs:
         with:
           registry: ghcr.io
           username: GriffinoBot
-          password: ${{ secrets.CD_BOT_TOKEN }}
+          password: ${{ secrets.GRIFFINO_BOT_CD_TOKEN }}
 
       - name: Push images and create manifest
         if: steps.find.outputs.plugin_dir != ''
@@ -272,12 +272,12 @@ jobs:
       - name: Publish to griffino-plugins
         if: steps.find.outputs.plugin_dir != ''
         env:
-          CD_BOT_TOKEN: ${{ secrets.CD_BOT_TOKEN }}
+          GRIFFINO_BOT_CD_TOKEN: ${{ secrets.GRIFFINO_BOT_CD_TOKEN }}
         run: |
           PLUGIN_ID="${{ steps.find.outputs.plugin_id }}"
           VERSION="${{ steps.meta.outputs.version }}"
 
-          git clone https://x-access-token:${CD_BOT_TOKEN}@github.com/GriffinGuard/griffino-plugins.git publish-target
+          git clone https://x-access-token:${GRIFFINO_BOT_CD_TOKEN}@github.com/GriffinGuard/griffino-plugins.git publish-target
           cd publish-target
 
           git config user.name "GriffinoBot"
