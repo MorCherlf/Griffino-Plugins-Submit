@@ -1,7 +1,7 @@
 name: Plugin Submission CI
 
 on:
-  pull_request:
+  pull_request_target:
     paths:
       - 'submissions/**'
 
@@ -16,12 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
       - name: Find changed submission directory
         id: find
         run: |
-          CHANGED=$(git diff --name-only origin/main...HEAD | grep '^submissions/' | grep -v '^submissions/\.example' | head -1)
+          CHANGED=$(git diff --name-only origin/main...${{ github.event.pull_request.head.sha }} | grep '^submissions/' | grep -v '^submissions/\.example' | head -1)
           if [ -z "$CHANGED" ]; then
             echo "No submission changes detected."
             exit 0
